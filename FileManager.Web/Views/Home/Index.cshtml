@@ -1,0 +1,90 @@
+﻿@using FileManager.Web.Models
+@{
+    ViewBag.Title = "Home Page";
+
+    var ext = (string)ViewBag.Ext;
+    var files = (List<FileModel>)ViewBag.Files;
+    var fileTypes = (List<string>)ViewBag.FileExtensions;
+}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @using (Html.BeginForm("AddFile", "Home", FormMethod.Post, new { role = "form", enctype = "multipart/form-data" }))
+            {
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">File Path</label>
+                            <div class="col-md-8">
+                                <input type="file" id="file" name="file" class="form-control" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin-top: 20px">
+    <div class="col-md-12" style="margin-bottom: 10px">
+        <div class="col-md-6">
+            <select class="form-control" id="fileTypeSelection" onchange="fileTypeSelected()">
+                <option @if (string.IsNullOrEmpty(ext)) { <text> selected="selected" </text> }>ALL</option>
+                @foreach (var fileType in fileTypes)
+                {
+                    <option @if (ext == fileType) { <text> selected="selected" </text> }>@fileType</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6">
+            <a href="#" class="btn btn-primary pull-right" data-toggle="modal" data-target="#exampleModal">Add New File</a>
+        </div>
+    </div>
+    <div class="col-md-12 table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>File Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var file in files)
+                {
+                    <tr>
+                        <td>@file.FileName</td>
+                        <td>@file.FileExtension</td>
+                        <td><a href="~/Home/DeleteFile?fileId=@file.FileId">Delete</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function fileTypeSelected() {
+        var ext = $('#fileTypeSelection').val();
+        if (ext == 'ALL')
+            window.location.href = "/Home/Index";
+        else
+            window.location.href = "/Home/Index?ext=" + ext;
+    }
+</script>
